@@ -111,6 +111,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         if (args.length < 2) { reply(sender, "usage-title"); return; }
 
         String raw  = joinFrom(args, 1);
+        raw = org.bukkit.ChatColor.translateAlternateColorCodes('&', raw);
         Component c = mm.deserialize(raw);
         getSession(sender).setTitle(c);
         replyRaw(sender, plugin.rawMessage("title-staged")
@@ -122,6 +123,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         if (args.length < 2) { reply(sender, "usage-subtitle"); return; }
 
         String raw  = joinFrom(args, 1);
+        raw = org.bukkit.ChatColor.translateAlternateColorCodes('&', raw);
         Component c = mm.deserialize(raw);
         getSession(sender).setSubtitle(c);
         replyRaw(sender, plugin.rawMessage("subtitle-staged")
@@ -215,6 +217,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
 
         String targetArg = args[1];
         String raw       = joinFrom(args, 2);
+        raw = org.bukkit.ChatColor.translateAlternateColorCodes('&', raw);
         Component bar    = mm.deserialize(raw);
 
         if (targetArg.equals("*")) {

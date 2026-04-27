@@ -74,11 +74,13 @@ public final class EasyTitle extends JavaPlugin {
     public int defaultFadeOut() { return getConfig().getInt("defaults.fade-out",  20); }
 
     public String rawPrefix() {
-        return getConfig().getString("prefix",
+        String prefix = getConfig().getString("prefix",
                 "<dark_gray>[<gold><bold>EasyTitle</bold></gold><dark_gray>]</dark_gray> ");
+        return org.bukkit.ChatColor.translateAlternateColorCodes('&', prefix);
     }
 
     public String rawMessage(String key) {
-        return getConfig().getString("messages." + key, "<red>Missing message: " + key);
+        String msg = getConfig().getString("messages." + key, "<red>Missing message: " + key);
+        return org.bukkit.ChatColor.translateAlternateColorCodes('&', msg);
     }
 }
