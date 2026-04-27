@@ -40,8 +40,42 @@ The primary command is `/etitle`. Permission node required: `easytitle.use` (Def
 | `/etitle send <target>` | Sends your currently staged title, subtitle, and action bar to a specific player or all players online (`*`). |
 | `/etitle broadcast` | Alias for `/etitle send *`. |
 | `/etitle clear [target]` | Instantly removes the active title from your screen, a specific player's screen, or everyone's screen (`*`). |
-| `/etitle reset [target]` | Completely resets the active title and restores default display timings for yourself, a target player, or everyone (`*`). |
-| `/etitle reload` | Reloads the configuration file. |
+| `/etitle reset [target]` | Resets the title and its timings back to defaults for a specific player or everyone (`*`). |
+| `/etitle reload` | Reloads `config.yml`. |
+
+## 🎨 Color Reference
+You can freely mix Legacy `&` codes and modern `<color>` tags in your titles! Here are all the supported standard colors and formats:
+
+| Legacy | MiniMessage Tag | Legacy | MiniMessage Tag |
+|:---:|:---|:---:|:---|
+| `&0` | `<black>` | `&8` | `<dark_gray>` |
+| `&1` | `<dark_blue>` | `&9` | `<blue>` |
+| `&2` | `<dark_green>` | `&a` | `<green>` |
+| `&3` | `<dark_aqua>` | `&b` | `<aqua>` |
+| `&4` | `<dark_red>` | `&c` | `<red>` |
+| `&5` | `<dark_purple>` | `&d` | `<light_purple>` |
+| `&6` | `<gold>` | `&e` | `<yellow>` |
+| `&7` | `<gray>` | `&f` | `<white>` |
+
+**Formatting:**
+- `&l` = `<bold>`
+- `&o` = `<italic>`
+- `&n` = `<underlined>`
+- `&m` = `<strikethrough>`
+- `&k` = `<obfuscated>`
+- `&r` = `<reset>`
+
+*Tip: MiniMessage also supports Hex colors! Example: `<#ff5555>This is custom red!`*
+
+## ⚙️ Configuration
+The configuration allows you to define the prefix for all plugin messages, localization, and default title display lengths.
+
+```yaml
+defaults:
+  fade-in: 10    # 0.5 seconds
+  stay: 70       # 3.5 seconds
+  fade-out: 20   # 1.0 seconds
+```
 
 **Example Workflow:**
 ```text
