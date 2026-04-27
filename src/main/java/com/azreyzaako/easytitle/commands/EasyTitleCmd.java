@@ -29,8 +29,9 @@ import java.util.stream.Collectors;
  *   /etitle preview
  *   /etitle send &lt;player|*&gt;
  *   /etitle broadcast
- *   /etitle actionbar &lt;player|*&gt; &lt;MiniMessage text&gt;
- *   /etitle clear [player]
+ *   /etitle actionbar &lt;MiniMessage text&gt;
+ *   /etitle clear [player|*]
+ *   /etitle reset [player|*]
  *   /etitle reload
  * </pre>
  */
@@ -91,6 +92,9 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
                 break;
             case "clear":
                 handleClear(sender, args);
+                break;
+            case "reset":
+                handleReset(sender, args);
                 break;
             case "reload":
                 handleReload(sender);
@@ -210,45 +214,37 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         replyRaw(sender, plugin.rawMessage("broadcast-sent"));
     }
 
-    /** /etitle actionbar <player|*> <text...> */
+    /** /etitle actionbar <text...> */
     private void handleActionBar(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("easytitle.send")) { reply(sender, "no-permission"); return; }
-        if (args.length < 3) { reply(sender, "usage-actionbar"); return; }
+        if (args.length < 2) { reply(sender, "usage-actionbar"); return; }
 
-        String targetArg = args[1];
-        String raw       = joinFrom(args, 2);
+        String raw  = joinFrom(args, 1);
         raw = org.bukkit.ChatColor.translateAlternateColorCodes('&', raw);
-        Component bar    = mm.deserialize(raw);
+        Component c = mm.deserialize(raw);
+        getSession(sender).setActionbar(c);
+        replyRaw(sender, plugin.rawMessage("actionbar-staged")
+                .replace("<text>", raw));
+    }
 
-        if (targetArg.equals("*")) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                plugin.adventure().player(p).sendActionBar(bar);
+    /** /etitle clear [player|*] */
+    private void handleClear(CommandSender sender, String[] args) {
+        if (args.length >= 2) {
+            // Clear another player or all
+            if (!sender.hasPermission("easytitle.send")) { reply(sender, "no-permission"); return; }
+            
+            String targetArg = args[1];
+            if (targetArg.equals("*")) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    plugin.adventure().player(p).clearTitle();
+                }
+                replyRaw(sender, plugin.rawMessage("cleared").replace("<target>", "everyone"));
+                return;
             }
-            replyRaw(sender, plugin.rawMessage("actionbar-sent")
-                    .replace("<target>", "everyone"));
-        } else {
+
             Player target = Bukkit.getPlayerExact(targetArg);
             if (target == null) {
                 replyRaw(sender, plugin.rawMessage("player-not-found")
                         .replace("<target>", targetArg));
-                return;
-            }
-            plugin.adventure().player(target).sendActionBar(bar);
-            replyRaw(sender, plugin.rawMessage("actionbar-sent")
-                    .replace("<target>", target.getName()));
-        }
-    }
-
-    /** /etitle clear [player] */
-    private void handleClear(CommandSender sender, String[] args) {
-        if (args.length >= 2) {
-            // Clear another player
-            if (!sender.hasPermission("easytitle.send")) { reply(sender, "no-permission"); return; }
-
-            Player target = Bukkit.getPlayerExact(args[1]);
-            if (target == null) {
-                replyRaw(sender, plugin.rawMessage("player-not-found")
-                        .replace("<target>", args[1]));
                 return;
             }
             plugin.adventure().player(target).clearTitle();
@@ -261,6 +257,35 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
             plugin.adventure().player(player).clearTitle();
             replyRaw(sender, plugin.rawMessage("cleared")
                     .replace("<target>", player.getName()));
+        }
+    }
+
+    /** /etitle reset [player|*] */
+    private void handleReset(CommandSender sender, String[] args) {
+        if (args.length >= 2) {
+            if (!sender.hasPermission("easytitle.send")) { reply(sender, "no-permission"); return; }
+            
+            String targetArg = args[1];
+            if (targetArg.equals("*")) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    plugin.adventure().player(p).resetTitle();
+                }
+                replyRaw(sender, plugin.rawMessage("reset").replace("<target>", "everyone"));
+                return;
+            }
+
+            Player target = Bukkit.getPlayerExact(targetArg);
+            if (target == null) {
+                replyRaw(sender, plugin.rawMessage("player-not-found").replace("<target>", targetArg));
+                return;
+            }
+            plugin.adventure().player(target).resetTitle();
+            replyRaw(sender, plugin.rawMessage("reset").replace("<target>", target.getName()));
+        } else {
+            if (!(sender instanceof Player)) { reply(sender, "player-only"); return; }
+            Player player = (Player) sender;
+            plugin.adventure().player(player).resetTitle();
+            replyRaw(sender, plugin.rawMessage("reset").replace("<target>", player.getName()));
         }
     }
 
@@ -288,8 +313,9 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         sendHelpLine(sender, "/etitle preview",                   "Preview staged title on yourself");
         sendHelpLine(sender, "/etitle send <player|*>",           "Send staged title to a player or all");
         sendHelpLine(sender, "/etitle broadcast",                 "Broadcast staged title to everyone");
-        sendHelpLine(sender, "/etitle actionbar <player|*> <t>", "Send an action bar message");
-        sendHelpLine(sender, "/etitle clear [player]",            "Clear title for yourself or a player");
+        sendHelpLine(sender, "/etitle actionbar <text>",          "Stage an action bar message");
+        sendHelpLine(sender, "/etitle clear [player|*]",          "Clear title for yourself or a player");
+        sendHelpLine(sender, "/etitle reset [player|*]",          "Reset title and timings for yourself or a player");
         sendHelpLine(sender, "/etitle reload",                    "Reload config.yml");
         plugin.adventure().sender(sender).sendMessage(footer);
     }
@@ -305,7 +331,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
 
     private static final List<String> SUBCOMMANDS = Arrays.asList(
             "help", "title", "subtitle", "times", "preview",
-            "send", "broadcast", "actionbar", "clear", "reload"
+            "send", "broadcast", "actionbar", "clear", "reset", "reload"
     );
 
     @Override
@@ -319,12 +345,12 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
 
         String sub = args[0].toLowerCase();
 
-        // /etitle send <player|*>  or  /etitle clear <player>
-        if ((sub.equals("send") || sub.equals("clear") || sub.equals("actionbar")) && args.length == 2) {
+        // /etitle send <player|*>  or  /etitle clear/reset <player|*>
+        if ((sub.equals("send") || sub.equals("clear") || sub.equals("reset")) && args.length == 2) {
             List<String> names = Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
                     .collect(Collectors.toList());
-            if (!sub.equals("clear")) names.add(0, "*");
+            names.add(0, "*");
             return filterPrefix(names, args[1]);
         }
 

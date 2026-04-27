@@ -29,18 +29,20 @@ The primary command is `/etitle`. Permission node required: `easytitle.use` (Def
 |---|---|
 | `/etitle title <text>` | Stages the main title. Supports MiniMessage and legacy `&` codes. |
 | `/etitle subtitle <text>` | Stages the subtitle. Supports MiniMessage and legacy `&` codes. |
+| `/etitle actionbar <text>` | Stages the action bar. Supports MiniMessage and legacy `&` codes. |
 | `/etitle times <fadeIn> <stay> <fadeOut>`| Configures title timings in server ticks (20 ticks = 1 sec). |
 | `/etitle preview` | Shows the staged title to yourself. |
-| `/etitle send <player|*>` | Sends the currently staged title to a specific player or all players. |
+| `/etitle send <player|*>` | Sends the currently staged title, subtitle, and actionbar. |
 | `/etitle broadcast` | Alias for `/etitle send *`. |
-| `/etitle actionbar <player|*> <text>` | Sends an action bar directly to a player or everyone. |
-| `/etitle clear [player]` | Clears the current title off the screen. |
+| `/etitle clear [player|*]` | Clears the current title off the screen. |
+| `/etitle reset [player|*]` | Resets title and timings for the target. |
 | `/etitle reload` | Reloads the configuration file. |
 
 **Example Workflow:**
 ```text
 /etitle title <gradient:red:gold>&lBoss Incoming!</gradient>
 /etitle subtitle <gray>Prepare your weapons! &c&lNOW!
+/etitle actionbar <yellow>Spawns in 10 seconds...
 /etitle times 10 100 20
 /etitle preview
 /etitle broadcast

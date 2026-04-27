@@ -63,6 +63,7 @@ public class TitleSessionManager {
 
         private Component title    = Component.empty();
         private Component subtitle = Component.empty();
+        private Component actionbar = Component.empty();
         private int fadeIn;
         private int stay;
         private int fadeOut;
@@ -76,6 +77,7 @@ public class TitleSessionManager {
         // Setters
         public void setTitle(Component title)       { this.title    = title; }
         public void setSubtitle(Component subtitle) { this.subtitle = subtitle; }
+        public void setActionbar(Component actionbar) { this.actionbar = actionbar; }
         public void setFadeIn(int fadeIn)           { this.fadeIn   = fadeIn; }
         public void setStay(int stay)               { this.stay     = stay; }
         public void setFadeOut(int fadeOut)         { this.fadeOut  = fadeOut; }
@@ -83,12 +85,13 @@ public class TitleSessionManager {
         // Getters
         public Component getTitle()    { return title; }
         public Component getSubtitle() { return subtitle; }
+        public Component getActionbar() { return actionbar; }
         public int getFadeIn()         { return fadeIn; }
         public int getStay()           { return stay; }
         public int getFadeOut()        { return fadeOut; }
 
         public boolean hasContent() {
-            return !title.equals(Component.empty()) || !subtitle.equals(Component.empty());
+            return !title.equals(Component.empty()) || !subtitle.equals(Component.empty()) || !actionbar.equals(Component.empty());
         }
 
         /**
@@ -104,9 +107,14 @@ public class TitleSessionManager {
             return Title.title(title, subtitle, times);
         }
 
-        /** Sends this staged title to the given player. */
+        /** Sends this staged title and action bar to the given player. */
         public void sendTo(Player target, EasyTitle plugin) {
-            plugin.adventure().player(target).showTitle(buildTitle());
+            if (!title.equals(Component.empty()) || !subtitle.equals(Component.empty())) {
+                plugin.adventure().player(target).showTitle(buildTitle());
+            }
+            if (!actionbar.equals(Component.empty())) {
+                plugin.adventure().player(target).sendActionBar(actionbar);
+            }
         }
 
         private static Duration ticksToDuration(int ticks) {
