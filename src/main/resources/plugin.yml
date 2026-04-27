@@ -1,0 +1,35 @@
+name: EasyTitle
+version: 1.0.0
+api-version: '1.13'
+main: com.azreyzaako.easytitle.EasyTitle
+authors: [ azreyzaako ]
+description: "Send beautifully formatted titles, subtitles, and action bars with a simple command."
+folia-supported: false
+
+commands:
+  etitle:
+    description: "EasyTitle command. Use /etitle help for usage."
+    usage: "/etitle <help|title|subtitle|times|send|broadcast|actionbar|clear|preview|reload>"
+    permission: easytitle.use
+
+permissions:
+  easytitle.use:
+    description: "Access to /etitle command."
+    default: op
+  easytitle.send:
+    description: "Send titles to other players."
+    default: op
+  easytitle.broadcast:
+    description: "Broadcast titles to all players."
+    default: op
+  easytitle.reload:
+    description: "Reload EasyTitle config."
+    default: op
+  easytitle.admin:
+    description: "All EasyTitle permissions."
+    default: op
+    children:
+      easytitle.use: true
+      easytitle.send: true
+      easytitle.broadcast: true
+      easytitle.reload: true

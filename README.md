@@ -1,0 +1,59 @@
+# EasyTitle 🏆
+
+![Minecraft Version](https://img.shields.io/badge/Minecraft-1.8.8%20--%201.21+-brightgreen.svg)
+![Java Version](https://img.shields.io/badge/Java-8%2B-orange.svg)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
+
+**EasyTitle** is a lightweight, fully backwards-compatible Minecraft server plugin that allows server administrators and players with permissions to easily broadcast and send beautifully formatted screen titles, subtitles, and action bars using simple commands. 
+
+Developed by **azreyzaako**, EasyTitle completely replaces the cumbersome vanilla `/title` command with an intuitive, staged workflow that fully supports the modern [MiniMessage](https://docs.advntr.dev/minimessage/format.html) formatting standard (e.g., `<red>`, `<gradient:gold:yellow>`, `<rainbow>`).
+
+## ✨ Key Features
+- **MiniMessage Support**: Create stunning gradients, hex colors, and interactive chat components effortlessly.
+- **Cross-Version Compatibility**: Native support from **1.8.8 up to the latest 1.21+** via Adventure platform abstraction. Java 8 compatible!
+- **Staging Workflow**: Stage your title and subtitle separately, tweak timings, and then broadcast, ensuring no mistakes are shown to players.
+- **Action Bar Messages**: Send beautiful action bar messages seamlessly.
+- **Fully Customizable**: All command messages and default timings are fully configurable via `config.yml`.
+
+## 📦 Installation
+1. Download the latest `easytitle-1.0.0.jar` from the Releases page.
+2. Drop it into your Minecraft server's `plugins/` directory.
+3. Restart your server.
+4. Modify `plugins/EasyTitle/config.yml` to your liking!
+
+## ⌨️ Commands & Usage
+The primary command is `/etitle`. Permission node required: `easytitle.use` (Default: OP).
+
+| Command | Description |
+|---|---|
+| `/etitle title <text>` | Stages the main title. Supports MiniMessage. |
+| `/etitle subtitle <text>` | Stages the subtitle. Supports MiniMessage. |
+| `/etitle times <fadeIn> <stay> <fadeOut>`| Configures title timings in server ticks (20 ticks = 1 sec). |
+| `/etitle preview` | Shows the staged title to yourself. |
+| `/etitle send <player|*>` | Sends the currently staged title to a specific player or all players. |
+| `/etitle broadcast` | Alias for `/etitle send *`. |
+| `/etitle actionbar <player|*> <text>` | Sends an action bar directly to a player or everyone. |
+| `/etitle clear [player]` | Clears the current title off the screen. |
+| `/etitle reload` | Reloads the configuration file. |
+
+**Example Workflow:**
+```text
+/etitle title <gradient:red:gold>Boss Incoming!</gradient>
+/etitle subtitle <gray>Prepare your weapons!
+/etitle times 10 100 20
+/etitle preview
+/etitle broadcast
+```
+
+## ⚙️ Configuration
+The configuration allows you to define the prefix for all plugin messages, localization, and default title display lengths.
+
+```yaml
+defaults:
+  fade-in: 10    # 0.5 seconds
+  stay: 70       # 3.5 seconds
+  fade-out: 20   # 1.0 seconds
+```
+
+## 📜 License
+This plugin is available under the MIT License. Feel free to fork, modify, and distribute!

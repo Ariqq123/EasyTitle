@@ -1,0 +1,34 @@
+# ============================================================
+#  EasyTitle Configuration
+# ============================================================
+
+# Default timing values (in ticks, 20 ticks = 1 second)
+defaults:
+  fade-in: 10    # 0.5 s
+  stay: 70       # 3.5 s
+  fade-out: 20   # 1.0 s
+
+# Prefix shown in plugin messages sent to the command sender
+# Supports MiniMessage formatting.
+prefix: "<dark_gray>[<gold><bold>EasyTitle</bold></gold><dark_gray>]</dark_gray> "
+
+# Messages sent back to the command sender (MiniMessage)
+messages:
+  no-permission: "<red>You don't have permission to do that."
+  player-only: "<red>This sub-command can only be used by players."
+  player-not-found: "<red>Player '<yellow><target></yellow>' not found."
+  title-staged: "<green>Title staged: <white><text>"
+  subtitle-staged: "<green>Subtitle staged: <white><text>"
+  times-set: "<green>Times set — fade-in: <white><fi><green>, stay: <white><st><green>, fade-out: <white><fo><green> ticks."
+  sent: "<green>Title sent to <white><target><green>."
+  broadcast-sent: "<green>Title broadcast to all players."
+  cleared: "<green>Cleared title for <white><target><green>."
+  actionbar-sent: "<green>Action bar sent to <white><target><green>."
+  reloaded: "<green>Configuration reloaded."
+  nothing-staged: "<yellow>Nothing staged yet. Use <white>/etitle title <text></white> first."
+  usage-title: "<yellow>Usage: <white>/etitle title <text>"
+  usage-subtitle: "<yellow>Usage: <white>/etitle subtitle <text>"
+  usage-times: "<yellow>Usage: <white>/etitle times <fadeIn> <stay> <fadeOut> <gray>(ticks)"
+  usage-send: "<yellow>Usage: <white>/etitle send <player|*>"
+  usage-actionbar: "<yellow>Usage: <white>/etitle actionbar <player|*> <text>"
+  usage-clear: "<yellow>Usage: <white>/etitle clear [player]"
