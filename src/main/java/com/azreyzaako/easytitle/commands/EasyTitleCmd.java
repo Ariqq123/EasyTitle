@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
  *   /etitle actionbar &lt;MiniMessage text&gt;
  *   /etitle clear [player|*]
  *   /etitle reset [player|*]
+ *   /etitle gui
  *   /etitle reload
  * </pre>
  */
@@ -95,6 +96,10 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
                 break;
             case "reset":
                 handleReset(sender, args);
+                break;
+            case "gui":
+                if (sender instanceof Player) plugin.getTitleGui().open((Player) sender);
+                else reply(sender, "player-only");
                 break;
             case "reload":
                 handleReload(sender);
@@ -316,6 +321,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         sendHelpLine(sender, "/etitle actionbar <text>",          "Stage an action bar message");
         sendHelpLine(sender, "/etitle clear [player|*]",          "Instantly remove active title for target or all (*)");
         sendHelpLine(sender, "/etitle reset [player|*]",          "Reset title and timings for target or all (*)");
+        sendHelpLine(sender, "/etitle gui",                       "Open the management GUI");
         sendHelpLine(sender, "/etitle reload",                    "Reload config.yml");
         plugin.adventure().sender(sender).sendMessage(footer);
     }
@@ -331,7 +337,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
 
     private static final List<String> SUBCOMMANDS = Arrays.asList(
             "help", "title", "subtitle", "times", "preview",
-            "send", "broadcast", "actionbar", "clear", "reset", "reload"
+            "send", "broadcast", "actionbar", "clear", "reset", "gui", "reload"
     );
 
     @Override

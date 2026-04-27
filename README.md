@@ -13,6 +13,7 @@ Developed by **azreyzaako**, EasyTitle completely replaces the cumbersome vanill
 - **Legacy Color Support**: Seamlessly mix classic ampersand color codes (e.g. `&a`, `&l`, `&4`) with modern MiniMessage tags.
 - **Cross-Version Compatibility**: Native support from **1.8.8 up to the latest 1.21+** via Adventure platform abstraction. Java 8 compatible!
 - **Staging Workflow**: Stage your title and subtitle separately, tweak timings, and then broadcast, ensuring no mistakes are shown to players.
+- **Management GUI**: Use `/etitle gui` to open an interactive control panel to preview, broadcast, edit timings, and clear your staged titles!
 - **Action Bar Messages**: Send beautiful action bar messages seamlessly.
 - **Fully Customizable**: All command messages and default timings are fully configurable via `config.yml`.
 
@@ -32,6 +33,7 @@ The primary command is `/etitle`. Permission node required: `easytitle.use` (Def
 | `/etitle actionbar <text>` | Stages the action bar. Supports MiniMessage and legacy `&` codes. |
 | `/etitle times <fadeIn> <stay> <fadeOut>`| Configures title timings in server ticks (20 ticks = 1 sec). |
 | `/etitle preview` | Shows the staged title to yourself. |
+| `/etitle gui` | Opens an interactive inventory GUI to manage your staged items and timings. |
 | `/etitle send <target>` | Sends your currently staged title, subtitle, and action bar to a specific player or all players online (`*`). |
 | `/etitle broadcast` | Alias for `/etitle send *`. |
 | `/etitle clear [target]` | Instantly removes the active title from your screen, a specific player's screen, or everyone's screen (`*`). |

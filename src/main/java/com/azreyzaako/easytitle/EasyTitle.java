@@ -1,6 +1,7 @@
 package com.azreyzaako.easytitle;
 
 import com.azreyzaako.easytitle.commands.EasyTitleCmd;
+import com.azreyzaako.easytitle.gui.TitleGui;
 import com.azreyzaako.easytitle.managers.TitleSessionManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -13,6 +14,7 @@ public final class EasyTitle extends JavaPlugin {
     private TitleSessionManager sessionManager;
     private MiniMessage miniMessage;
     private BukkitAudiences adventure;
+    private TitleGui titleGui;
 
     @Override
     public void onEnable() {
@@ -22,6 +24,9 @@ public final class EasyTitle extends JavaPlugin {
         this.adventure = BukkitAudiences.create(this);
         this.miniMessage = MiniMessage.miniMessage();
         this.sessionManager = new TitleSessionManager(this);
+        this.titleGui = new TitleGui(this);
+
+        getServer().getPluginManager().registerEvents(this.titleGui, this);
 
         EasyTitleCmd cmdExecutor = new EasyTitleCmd(this);
         PluginCommand cmd = getCommand("etitle");
@@ -59,6 +64,10 @@ public final class EasyTitle extends JavaPlugin {
 
     public TitleSessionManager getSessionManager() {
         return sessionManager;
+    }
+
+    public TitleGui getTitleGui() {
+        return titleGui;
     }
 
     public MiniMessage getMiniMessage() {
