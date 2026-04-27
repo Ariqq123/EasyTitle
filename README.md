@@ -20,7 +20,7 @@ Developed by **azreyzaako**, EasyTitle completely replaces the cumbersome vanill
 - **Fully Customizable**: All command messages and default timings are fully configurable via `config.yml`.
 
 ## 📦 Installation
-1. Download the latest `easytitle-1.0.0.jar` from the Releases page.
+1. Download the latest jar file from the [Releases](https://github.com/Ariqq123/EasyTitle/releases/latest) page.
 2. Drop it into your Minecraft server's `plugins/` directory.
 3. Restart your server.
 4. Modify `plugins/EasyTitle/config.yml` to your liking!
