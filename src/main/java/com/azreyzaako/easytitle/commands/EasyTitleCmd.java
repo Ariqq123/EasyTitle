@@ -271,6 +271,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
             if (targetArg.equals("*")) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     plugin.adventure().player(p).resetTitle();
+                    sessionManager.remove(p.getUniqueId());
                 }
                 replyRaw(sender, plugin.rawMessage("reset").replace("<target>", "everyone"));
                 return;
@@ -282,11 +283,13 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
                 return;
             }
             plugin.adventure().player(target).resetTitle();
+            sessionManager.remove(target.getUniqueId());
             replyRaw(sender, plugin.rawMessage("reset").replace("<target>", target.getName()));
         } else {
             if (!(sender instanceof Player)) { reply(sender, "player-only"); return; }
             Player player = (Player) sender;
             plugin.adventure().player(player).resetTitle();
+            sessionManager.remove(player.getUniqueId());
             replyRaw(sender, plugin.rawMessage("reset").replace("<target>", player.getName()));
         }
     }
