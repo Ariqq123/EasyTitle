@@ -10,6 +10,7 @@ Developed by **azreyzaako**, EasyTitle completely replaces the cumbersome vanill
 
 ## ✨ Key Features
 - **MiniMessage Support**: Create stunning gradients, hex colors, and interactive chat components effortlessly.
+- **Legacy Color Support**: Seamlessly mix classic ampersand color codes (e.g. `&a`, `&l`, `&4`) with modern MiniMessage tags.
 - **Cross-Version Compatibility**: Native support from **1.8.8 up to the latest 1.21+** via Adventure platform abstraction. Java 8 compatible!
 - **Staging Workflow**: Stage your title and subtitle separately, tweak timings, and then broadcast, ensuring no mistakes are shown to players.
 - **Action Bar Messages**: Send beautiful action bar messages seamlessly.
@@ -26,8 +27,8 @@ The primary command is `/etitle`. Permission node required: `easytitle.use` (Def
 
 | Command | Description |
 |---|---|
-| `/etitle title <text>` | Stages the main title. Supports MiniMessage. |
-| `/etitle subtitle <text>` | Stages the subtitle. Supports MiniMessage. |
+| `/etitle title <text>` | Stages the main title. Supports MiniMessage and legacy `&` codes. |
+| `/etitle subtitle <text>` | Stages the subtitle. Supports MiniMessage and legacy `&` codes. |
 | `/etitle times <fadeIn> <stay> <fadeOut>`| Configures title timings in server ticks (20 ticks = 1 sec). |
 | `/etitle preview` | Shows the staged title to yourself. |
 | `/etitle send <player|*>` | Sends the currently staged title to a specific player or all players. |
@@ -38,8 +39,8 @@ The primary command is `/etitle`. Permission node required: `easytitle.use` (Def
 
 **Example Workflow:**
 ```text
-/etitle title <gradient:red:gold>Boss Incoming!</gradient>
-/etitle subtitle <gray>Prepare your weapons!
+/etitle title <gradient:red:gold>&lBoss Incoming!</gradient>
+/etitle subtitle <gray>Prepare your weapons! &c&lNOW!
 /etitle times 10 100 20
 /etitle preview
 /etitle broadcast
