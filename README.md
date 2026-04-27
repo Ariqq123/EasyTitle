@@ -87,15 +87,5 @@ defaults:
 /etitle broadcast
 ```
 
-## ⚙️ Configuration
-The configuration allows you to define the prefix for all plugin messages, localization, and default title display lengths.
-
-```yaml
-defaults:
-  fade-in: 10    # 0.5 seconds
-  stay: 70       # 3.5 seconds
-  fade-out: 20   # 1.0 seconds
-```
-
 ## 📜 License
 This plugin is available under the MIT License. Feel free to fork, modify, and distribute!
