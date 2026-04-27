@@ -133,7 +133,7 @@ public class TitleSessionManager {
                 parsed = PlaceholderAPI.setPlaceholders(target, parsed);
             }
             parsed = EasyTitle.legacyToMiniMessage(parsed);
-            return plugin.getMiniMessage().deserialize(parsed);
+            return plugin.getSafeMiniMessage().deserialize(parsed);
         }
 
         private static Duration ticksToDuration(int ticks) {

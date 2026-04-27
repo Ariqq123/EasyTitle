@@ -363,6 +363,14 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
             "send", "broadcast", "actionbar", "sound", "clear", "reset", "gui", "reload"
     );
 
+    /** Cached sound name list to avoid re-streaming XSound.values() on every tab press. */
+    private static final List<String> SOUND_NAMES;
+    static {
+        SOUND_NAMES = java.util.Arrays.stream(com.cryptomorin.xseries.XSound.values())
+                .map(com.cryptomorin.xseries.XSound::name)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command,
                                       String alias, String[] args) {
@@ -384,10 +392,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         }
 
         if (sub.equals("sound") && args.length == 2) {
-            List<String> sounds = java.util.Arrays.stream(com.cryptomorin.xseries.XSound.values())
-                    .map(com.cryptomorin.xseries.XSound::name)
-                    .collect(Collectors.toList());
-            return filterPrefix(sounds, args[1]);
+            return filterPrefix(SOUND_NAMES, args[1]);
         }
 
         // /etitle times <fi> <st> <fo>

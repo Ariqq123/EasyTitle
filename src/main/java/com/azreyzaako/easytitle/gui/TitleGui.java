@@ -17,10 +17,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class TitleGui implements Listener {
     private final EasyTitle plugin;
     private final String titleName = ChatColor.GOLD + "EasyTitle Menu";
+    /** Tracks players who confirmed an edit — prevents the onClose from reopening the GUI. */
+    private final Set<UUID> confirmed = new HashSet<>();
 
     public TitleGui(EasyTitle plugin) {
         this.plugin = plugin;
@@ -82,14 +87,17 @@ public class TitleGui implements Listener {
     private void openAnvilEditor(Player player, String target, String currentText) {
         new AnvilGUI.Builder()
                 .onClose(stateSnapshot -> {
-                    // Re-open main GUI on next tick
-                    plugin.getServer().getScheduler().runTask(plugin, () -> open(stateSnapshot.getPlayer()));
+                    Player p = stateSnapshot.getPlayer();
+                    // Only re-open main GUI if the player did NOT confirm an edit
+                    if (confirmed.remove(p.getUniqueId())) return;
+                    plugin.getServer().getScheduler().runTask(plugin, () -> open(p));
                 })
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT) {
                         return Collections.emptyList();
                     }
-                    String text = stateSnapshot.getText().replace("none", "");
+                    String text = stateSnapshot.getText();
+                    if ("none".equalsIgnoreCase(text)) text = "";
                     TitleSessionManager.TitleSession session = plugin.getSessionManager().getOrCreate(stateSnapshot.getPlayer().getUniqueId());
                     
                     if (target.equals("title")) session.setTitle(text);
@@ -104,6 +112,7 @@ public class TitleGui implements Listener {
                         }
                     }
 
+                    confirmed.add(stateSnapshot.getPlayer().getUniqueId());
                     return Arrays.asList(AnvilGUI.ResponseAction.close());
                 })
                 .text(currentText == null || currentText.isEmpty() ? "none" : currentText)

@@ -1,5 +1,5 @@
 name: EasyTitle
-version: 1.3.1
+version: 1.3.2
 api-version: '1.13'
 main: com.azreyzaako.easytitle.EasyTitle
 authors: [ azreyzaako ]
@@ -10,7 +10,7 @@ folia-supported: false
 commands:
   etitle:
     description: "EasyTitle command. Use /etitle help for usage."
-    usage: "/etitle <help|title|subtitle|times|send|broadcast|actionbar|clear|preview|reload>"
+    usage: "/etitle <help|title|subtitle|times|send|broadcast|actionbar|sound|clear|reset|gui|preview|reload>"
     permission: easytitle.use
 
 permissions:
