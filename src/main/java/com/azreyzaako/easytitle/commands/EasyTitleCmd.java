@@ -101,6 +101,9 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) plugin.getTitleGui().open((Player) sender);
                 else reply(sender, "player-only");
                 break;
+            case "sound":
+                handleSound(sender, args);
+                break;
             case "reload":
                 handleReload(sender);
                 break;
@@ -120,11 +123,9 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         if (args.length < 2) { reply(sender, "usage-title"); return; }
 
         String raw  = joinFrom(args, 1);
-        raw = org.bukkit.ChatColor.translateAlternateColorCodes('&', raw);
-        Component c = mm.deserialize(raw);
-        getSession(sender).setTitle(c);
+        getSession(sender).setTitle(raw);
         replyRaw(sender, plugin.rawMessage("title-staged")
-                .replace("<text>", raw));
+                .replace("<text>", org.bukkit.ChatColor.translateAlternateColorCodes('&', raw)));
     }
 
     /** /etitle subtitle <text...> */
@@ -132,11 +133,9 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         if (args.length < 2) { reply(sender, "usage-subtitle"); return; }
 
         String raw  = joinFrom(args, 1);
-        raw = org.bukkit.ChatColor.translateAlternateColorCodes('&', raw);
-        Component c = mm.deserialize(raw);
-        getSession(sender).setSubtitle(c);
+        getSession(sender).setSubtitle(raw);
         replyRaw(sender, plugin.rawMessage("subtitle-staged")
-                .replace("<text>", raw));
+                .replace("<text>", org.bukkit.ChatColor.translateAlternateColorCodes('&', raw)));
     }
 
     /** /etitle times <fadeIn> <stay> <fadeOut> */
@@ -224,11 +223,9 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         if (args.length < 2) { reply(sender, "usage-actionbar"); return; }
 
         String raw  = joinFrom(args, 1);
-        raw = org.bukkit.ChatColor.translateAlternateColorCodes('&', raw);
-        Component c = mm.deserialize(raw);
-        getSession(sender).setActionbar(c);
+        getSession(sender).setActionbar(raw);
         replyRaw(sender, plugin.rawMessage("actionbar-staged")
-                .replace("<text>", raw));
+                .replace("<text>", org.bukkit.ChatColor.translateAlternateColorCodes('&', raw)));
     }
 
     /** /etitle clear [player|*] */
@@ -294,6 +291,31 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         }
     }
 
+    /** /etitle sound <sound> [volume] [pitch] */
+    private void handleSound(CommandSender sender, String[] args) {
+        if (args.length < 2) { reply(sender, "usage-sound"); return; }
+        
+        java.util.Optional<com.cryptomorin.xseries.XSound> optSound = com.cryptomorin.xseries.XSound.matchXSound(args[1]);
+        if (!optSound.isPresent()) {
+            replyRaw(sender, plugin.rawMessage("sound-not-found").replace("<sound>", args[1]));
+            return;
+        }
+
+        float volume = 1.0f;
+        float pitch = 1.0f;
+        
+        try {
+            if (args.length >= 3) volume = Float.parseFloat(args[2]);
+            if (args.length >= 4) pitch = Float.parseFloat(args[3]);
+        } catch (NumberFormatException e) {
+            replyRaw(sender, plugin.rawMessage("invalid-number"));
+            return;
+        }
+
+        getSession(sender).setSound(optSound.get(), volume, pitch);
+        replyRaw(sender, plugin.rawMessage("sound-staged").replace("<sound>", optSound.get().name()));
+    }
+
     /** /etitle reload */
     private void handleReload(CommandSender sender) {
         if (!sender.hasPermission("easytitle.reload")) { reply(sender, "no-permission"); return; }
@@ -319,6 +341,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         sendHelpLine(sender, "/etitle send <player|*>",           "Send staged title/actionbar to a player or all (*)");
         sendHelpLine(sender, "/etitle broadcast",                 "Broadcast staged title to everyone");
         sendHelpLine(sender, "/etitle actionbar <text>",          "Stage an action bar message");
+        sendHelpLine(sender, "/etitle sound <sound> [v] [p]",     "Stage a sound effect");
         sendHelpLine(sender, "/etitle clear [player|*]",          "Instantly remove active title for target or all (*)");
         sendHelpLine(sender, "/etitle reset [player|*]",          "Reset title and timings for target or all (*)");
         sendHelpLine(sender, "/etitle gui",                       "Open the management GUI");
@@ -337,7 +360,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
 
     private static final List<String> SUBCOMMANDS = Arrays.asList(
             "help", "title", "subtitle", "times", "preview",
-            "send", "broadcast", "actionbar", "clear", "reset", "gui", "reload"
+            "send", "broadcast", "actionbar", "sound", "clear", "reset", "gui", "reload"
     );
 
     @Override
@@ -358,6 +381,13 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
                     .collect(Collectors.toList());
             names.add(0, "*");
             return filterPrefix(names, args[1]);
+        }
+
+        if (sub.equals("sound") && args.length == 2) {
+            List<String> sounds = java.util.Arrays.stream(com.cryptomorin.xseries.XSound.values())
+                    .map(com.cryptomorin.xseries.XSound::name)
+                    .collect(Collectors.toList());
+            return filterPrefix(sounds, args[1]);
         }
 
         // /etitle times <fi> <st> <fo>

@@ -3,7 +3,8 @@ package com.azreyzaako.easytitle.gui;
 import com.azreyzaako.easytitle.EasyTitle;
 import com.azreyzaako.easytitle.managers.TitleSessionManager;
 import com.cryptomorin.xseries.XMaterial;
-import net.kyori.adventure.text.Component;
+import com.cryptomorin.xseries.XSound;
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 public class TitleGui implements Listener {
     private final EasyTitle plugin;
@@ -34,13 +36,20 @@ public class TitleGui implements Listener {
             inv.setItem(i, glass);
         }
 
-        // Row 1: Info
+        // Row 1: Info & Components
         inv.setItem(10, createItem(XMaterial.NAME_TAG, ChatColor.YELLOW + "Staged Title",
-                ChatColor.GRAY + "Currently:", ChatColor.WHITE + toPlain(session.getTitle())));
+                ChatColor.GRAY + "Currently:", ChatColor.WHITE + (session.getTitle().isEmpty() ? "None" : session.getTitle()),
+                "", ChatColor.GREEN + "Click to edit!"));
         inv.setItem(11, createItem(XMaterial.NAME_TAG, ChatColor.YELLOW + "Staged Subtitle",
-                ChatColor.GRAY + "Currently:", ChatColor.WHITE + toPlain(session.getSubtitle())));
+                ChatColor.GRAY + "Currently:", ChatColor.WHITE + (session.getSubtitle().isEmpty() ? "None" : session.getSubtitle()),
+                "", ChatColor.GREEN + "Click to edit!"));
         inv.setItem(12, createItem(XMaterial.NAME_TAG, ChatColor.YELLOW + "Staged Actionbar",
-                ChatColor.GRAY + "Currently:", ChatColor.WHITE + toPlain(session.getActionbar())));
+                ChatColor.GRAY + "Currently:", ChatColor.WHITE + (session.getActionbar().isEmpty() ? "None" : session.getActionbar()),
+                "", ChatColor.GREEN + "Click to edit!"));
+        inv.setItem(13, createItem(XMaterial.JUKEBOX, ChatColor.YELLOW + "Staged Sound",
+                ChatColor.GRAY + "Currently:", ChatColor.WHITE.toString() + (session.getSound() == null ? "None" : session.getSound().name()),
+                ChatColor.GRAY + "Vol/Pitch:", ChatColor.WHITE.toString() + session.getVolume() + " / " + session.getPitch(),
+                "", ChatColor.GREEN + "Click to edit!"));
 
         // Row 1: Times
         inv.setItem(14, createItem(XMaterial.CLOCK, ChatColor.AQUA + "Fade In",
@@ -58,14 +67,9 @@ public class TitleGui implements Listener {
         player.openInventory(inv);
     }
 
-    private String toPlain(Component c) {
-        if (c.equals(Component.empty())) return "None";
-        return plugin.getMiniMessage().serialize(c);
-    }
-
     private ItemStack createItem(XMaterial mat, String name, String... lore) {
         ItemStack item = mat.parseItem();
-        if (item == null) return null; // Fallback handled by XSeries if material not found
+        if (item == null) return null;
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(name);
@@ -73,6 +77,39 @@ public class TitleGui implements Listener {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private void openAnvilEditor(Player player, String target, String currentText) {
+        new AnvilGUI.Builder()
+                .onClose(stateSnapshot -> {
+                    // Re-open main GUI on next tick
+                    plugin.getServer().getScheduler().runTask(plugin, () -> open(stateSnapshot.getPlayer()));
+                })
+                .onClick((slot, stateSnapshot) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT) {
+                        return Collections.emptyList();
+                    }
+                    String text = stateSnapshot.getText().replace("none", "");
+                    TitleSessionManager.TitleSession session = plugin.getSessionManager().getOrCreate(stateSnapshot.getPlayer().getUniqueId());
+                    
+                    if (target.equals("title")) session.setTitle(text);
+                    else if (target.equals("subtitle")) session.setSubtitle(text);
+                    else if (target.equals("actionbar")) session.setActionbar(text);
+                    else if (target.equals("sound")) {
+                        java.util.Optional<XSound> opt = XSound.matchXSound(text);
+                        if (opt.isPresent()) session.setSound(opt.get(), 1.0f, 1.0f);
+                        else {
+                            stateSnapshot.getPlayer().sendMessage(ChatColor.RED + "Invalid sound name: " + text);
+                            return Collections.emptyList();
+                        }
+                    }
+
+                    return Arrays.asList(AnvilGUI.ResponseAction.close());
+                })
+                .text(currentText == null || currentText.isEmpty() ? "none" : currentText)
+                .title("Edit " + target)
+                .plugin(plugin)
+                .open(player);
     }
 
     @EventHandler
@@ -85,6 +122,18 @@ public class TitleGui implements Listener {
             TitleSessionManager.TitleSession session = plugin.getSessionManager().getOrCreate(p.getUniqueId());
 
             switch (slot) {
+                case 10:
+                    openAnvilEditor(p, "title", session.getTitle());
+                    break;
+                case 11:
+                    openAnvilEditor(p, "subtitle", session.getSubtitle());
+                    break;
+                case 12:
+                    openAnvilEditor(p, "actionbar", session.getActionbar());
+                    break;
+                case 13:
+                    openAnvilEditor(p, "sound", session.getSound() == null ? "" : session.getSound().name());
+                    break;
                 case 14: // Fade in
                     int fi = session.getFadeIn() + 10;
                     if (fi > 100) fi = 0;
@@ -112,9 +161,10 @@ public class TitleGui implements Listener {
                     p.performCommand("etitle broadcast");
                     break;
                 case 24: // Clear
-                    session.setTitle(Component.empty());
-                    session.setSubtitle(Component.empty());
-                    session.setActionbar(Component.empty());
+                    session.setTitle("");
+                    session.setSubtitle("");
+                    session.setActionbar("");
+                    session.setSound(null, 1f, 1f);
                     session.setFadeIn(plugin.defaultFadeIn());
                     session.setStay(plugin.defaultStay());
                     session.setFadeOut(plugin.defaultFadeOut());

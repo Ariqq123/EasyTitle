@@ -1,6 +1,8 @@
 package com.azreyzaako.easytitle.managers;
 
 import com.azreyzaako.easytitle.EasyTitle;
+import com.cryptomorin.xseries.XSound;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
@@ -61,9 +63,12 @@ public class TitleSessionManager {
     /** Mutable staging area for a single sender's title. */
     public static class TitleSession {
 
-        private Component title    = Component.empty();
-        private Component subtitle = Component.empty();
-        private Component actionbar = Component.empty();
+        private String title    = "";
+        private String subtitle = "";
+        private String actionbar = "";
+        private XSound sound = null;
+        private float volume = 1.0f;
+        private float pitch = 1.0f;
         private int fadeIn;
         private int stay;
         private int fadeOut;
@@ -75,46 +80,60 @@ public class TitleSessionManager {
         }
 
         // Setters
-        public void setTitle(Component title)       { this.title    = title; }
-        public void setSubtitle(Component subtitle) { this.subtitle = subtitle; }
-        public void setActionbar(Component actionbar) { this.actionbar = actionbar; }
+        public void setTitle(String title)       { this.title    = title; }
+        public void setSubtitle(String subtitle) { this.subtitle = subtitle; }
+        public void setActionbar(String actionbar) { this.actionbar = actionbar; }
+        public void setSound(XSound sound, float vol, float pit) { this.sound = sound; this.volume = vol; this.pitch = pit; }
         public void setFadeIn(int fadeIn)           { this.fadeIn   = fadeIn; }
         public void setStay(int stay)               { this.stay     = stay; }
         public void setFadeOut(int fadeOut)         { this.fadeOut  = fadeOut; }
 
         // Getters
-        public Component getTitle()    { return title; }
-        public Component getSubtitle() { return subtitle; }
-        public Component getActionbar() { return actionbar; }
+        public String getTitle()    { return title; }
+        public String getSubtitle() { return subtitle; }
+        public String getActionbar() { return actionbar; }
+        public XSound getSound()    { return sound; }
+        public float getVolume()    { return volume; }
+        public float getPitch()     { return pitch; }
         public int getFadeIn()         { return fadeIn; }
         public int getStay()           { return stay; }
         public int getFadeOut()        { return fadeOut; }
 
         public boolean hasContent() {
-            return !title.equals(Component.empty()) || !subtitle.equals(Component.empty()) || !actionbar.equals(Component.empty());
+            return !title.isEmpty() || !subtitle.isEmpty() || !actionbar.isEmpty();
         }
 
-        /**
-         * Builds an Adventure {@link Title} from the current staged values.
-         * Timing is converted from ticks to milliseconds for {@link Duration}.
-         */
-        public Title buildTitle() {
+        /** Builds a Title component by parsing Strings. */
+        public Title buildTitle(Player target, EasyTitle plugin) {
             Title.Times times = Title.Times.times(
                     ticksToDuration(fadeIn),
                     ticksToDuration(stay),
                     ticksToDuration(fadeOut)
             );
-            return Title.title(title, subtitle, times);
+            return Title.title(parse(title, target, plugin), parse(subtitle, target, plugin), times);
         }
 
         /** Sends this staged title and action bar to the given player. */
         public void sendTo(Player target, EasyTitle plugin) {
-            if (!title.equals(Component.empty()) || !subtitle.equals(Component.empty())) {
-                plugin.adventure().player(target).showTitle(buildTitle());
+            if (!title.isEmpty() || !subtitle.isEmpty()) {
+                plugin.adventure().player(target).showTitle(buildTitle(target, plugin));
             }
-            if (!actionbar.equals(Component.empty())) {
-                plugin.adventure().player(target).sendActionBar(actionbar);
+            if (!actionbar.isEmpty()) {
+                plugin.adventure().player(target).sendActionBar(parse(actionbar, target, plugin));
             }
+            if (sound != null) {
+                sound.play(target, volume, pitch);
+            }
+        }
+
+        private Component parse(String text, Player target, EasyTitle plugin) {
+            if (text == null || text.isEmpty()) return Component.empty();
+            String parsed = text;
+            if (target != null && org.bukkit.Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                parsed = PlaceholderAPI.setPlaceholders(target, parsed);
+            }
+            parsed = org.bukkit.ChatColor.translateAlternateColorCodes('&', parsed);
+            return plugin.getMiniMessage().deserialize(parsed);
         }
 
         private static Duration ticksToDuration(int ticks) {
