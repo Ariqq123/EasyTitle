@@ -83,13 +83,27 @@ public final class EasyTitle extends JavaPlugin {
     public int defaultFadeOut() { return getConfig().getInt("defaults.fade-out",  20); }
 
     public String rawPrefix() {
-        String prefix = getConfig().getString("prefix",
-                "<dark_gray>[<gold><bold>EasyTitle</bold></gold><dark_gray>]</dark_gray> ");
-        return org.bukkit.ChatColor.translateAlternateColorCodes('&', prefix);
+        return legacyToMiniMessage(getConfig().getString("prefix",
+                "<dark_gray>[<gold><bold>EasyTitle</bold></gold><dark_gray>]</dark_gray> "));
     }
 
     public String rawMessage(String key) {
-        String msg = getConfig().getString("messages." + key, "<red>Missing message: " + key);
-        return org.bukkit.ChatColor.translateAlternateColorCodes('&', msg);
+        return legacyToMiniMessage(getConfig().getString("messages." + key, "<red>Missing message: " + key));
+    }
+
+    public static String legacyToMiniMessage(String text) {
+        if (text == null) return null;
+        return text.replace("&0", "<black>").replace("&1", "<dark_blue>").replace("&2", "<dark_green>").replace("&3", "<dark_aqua>")
+                   .replace("&4", "<dark_red>").replace("&5", "<dark_purple>").replace("&6", "<gold>").replace("&7", "<gray>")
+                   .replace("&8", "<dark_gray>").replace("&9", "<blue>").replace("&a", "<green>").replace("&b", "<aqua>")
+                   .replace("&c", "<red>").replace("&d", "<light_purple>").replace("&e", "<yellow>").replace("&f", "<white>")
+                   .replace("&k", "<obfuscated>").replace("&l", "<bold>").replace("&m", "<strikethrough>")
+                   .replace("&n", "<underlined>").replace("&o", "<italic>").replace("&r", "<reset>")
+                   .replace("§0", "<black>").replace("§1", "<dark_blue>").replace("§2", "<dark_green>").replace("§3", "<dark_aqua>")
+                   .replace("§4", "<dark_red>").replace("§5", "<dark_purple>").replace("§6", "<gold>").replace("§7", "<gray>")
+                   .replace("§8", "<dark_gray>").replace("§9", "<blue>").replace("§a", "<green>").replace("§b", "<aqua>")
+                   .replace("§c", "<red>").replace("§d", "<light_purple>").replace("§e", "<yellow>").replace("§f", "<white>")
+                   .replace("§k", "<obfuscated>").replace("§l", "<bold>").replace("§m", "<strikethrough>")
+                   .replace("§n", "<underlined>").replace("§o", "<italic>").replace("§r", "<reset>");
     }
 }

@@ -132,7 +132,7 @@ public class TitleSessionManager {
             if (target != null && org.bukkit.Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 parsed = PlaceholderAPI.setPlaceholders(target, parsed);
             }
-            parsed = org.bukkit.ChatColor.translateAlternateColorCodes('&', parsed);
+            parsed = EasyTitle.legacyToMiniMessage(parsed);
             return plugin.getMiniMessage().deserialize(parsed);
         }
 

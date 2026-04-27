@@ -125,7 +125,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         String raw  = joinFrom(args, 1);
         getSession(sender).setTitle(raw);
         replyRaw(sender, plugin.rawMessage("title-staged")
-                .replace("<text>", org.bukkit.ChatColor.translateAlternateColorCodes('&', raw)));
+                .replace("<text>", EasyTitle.legacyToMiniMessage(raw)));
     }
 
     /** /etitle subtitle <text...> */
@@ -135,7 +135,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         String raw  = joinFrom(args, 1);
         getSession(sender).setSubtitle(raw);
         replyRaw(sender, plugin.rawMessage("subtitle-staged")
-                .replace("<text>", org.bukkit.ChatColor.translateAlternateColorCodes('&', raw)));
+                .replace("<text>", EasyTitle.legacyToMiniMessage(raw)));
     }
 
     /** /etitle times <fadeIn> <stay> <fadeOut> */
@@ -225,7 +225,7 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         String raw  = joinFrom(args, 1);
         getSession(sender).setActionbar(raw);
         replyRaw(sender, plugin.rawMessage("actionbar-staged")
-                .replace("<text>", org.bukkit.ChatColor.translateAlternateColorCodes('&', raw)));
+                .replace("<text>", EasyTitle.legacyToMiniMessage(raw)));
     }
 
     /** /etitle clear [player|*] */
