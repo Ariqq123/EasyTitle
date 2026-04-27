@@ -311,11 +311,11 @@ public class EasyTitleCmd implements CommandExecutor, TabCompleter {
         sendHelpLine(sender, "/etitle subtitle <text>",          "Stage a subtitle");
         sendHelpLine(sender, "/etitle times <fi> <st> <fo>",     "Set fade-in / stay / fade-out (ticks)");
         sendHelpLine(sender, "/etitle preview",                   "Preview staged title on yourself");
-        sendHelpLine(sender, "/etitle send <player|*>",           "Send staged title to a player or all");
+        sendHelpLine(sender, "/etitle send <player|*>",           "Send staged title/actionbar to a player or all (*)");
         sendHelpLine(sender, "/etitle broadcast",                 "Broadcast staged title to everyone");
         sendHelpLine(sender, "/etitle actionbar <text>",          "Stage an action bar message");
-        sendHelpLine(sender, "/etitle clear [player|*]",          "Clear title for yourself or a player");
-        sendHelpLine(sender, "/etitle reset [player|*]",          "Reset title and timings for yourself or a player");
+        sendHelpLine(sender, "/etitle clear [player|*]",          "Instantly remove active title for target or all (*)");
+        sendHelpLine(sender, "/etitle reset [player|*]",          "Reset title and timings for target or all (*)");
         sendHelpLine(sender, "/etitle reload",                    "Reload config.yml");
         plugin.adventure().sender(sender).sendMessage(footer);
     }
