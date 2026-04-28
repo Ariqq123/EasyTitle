@@ -121,7 +121,7 @@ public class TitleGui implements Listener {
                 .open(player);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = org.bukkit.event.EventPriority.HIGH)
     public void onClick(InventoryClickEvent e) {
         if (e.getView().getTitle().equals(titleName)) {
             e.setCancelled(true);
@@ -180,6 +180,13 @@ public class TitleGui implements Listener {
                     open(p);
                     break;
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = org.bukkit.event.EventPriority.HIGH)
+    public void onDrag(org.bukkit.event.inventory.InventoryDragEvent e) {
+        if (e.getView().getTitle().equals(titleName)) {
+            e.setCancelled(true);
         }
     }
 }
